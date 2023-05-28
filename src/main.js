@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 // Vuetify
 import 'vuetify/styles'
@@ -8,11 +9,34 @@ import * as components from 'vuetify/lib/components'
 import * as directives from 'vuetify/lib/directives'
 import '@mdi/font/css/materialdesignicons.css'
 
+import TestComponentVue from './components/TestComponent.vue'
+import ExplanationPageVue from './components/ExplanationPage.vue'
+import FakeConversationVue from "./components/FakeConversation.vue"
+
 const vuetify = createVuetify({
   components,
   directives,
 })
 
+const router = createRouter({
+	routes: [
+		{
+			path: '/',
+			component: TestComponentVue
+		},
+		{
+			path: '/explanation',
+			component: ExplanationPageVue
+		},
+		{
+			path: '/fakeconvo',
+			component: FakeConversationVue
+		},
+	], history: createWebHistory(),
+})
+console.log(router)
+
 createApp(App)
 .use(vuetify)
+.use(router)
 .mount('#app')

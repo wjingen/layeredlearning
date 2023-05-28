@@ -1,20 +1,23 @@
 <template>
   <div class="app">
+    <NavBar />
     <!-- <MainPage /> -->
-    <TestComponent />
+    <!-- <TestComponent /> -->
+    <router-view></router-view>
     <!-- <SpeechToText /> -->
   </div>
 </template>
 
 <script>
 // import MainPage from "./components/MainPage.vue";
-import TestComponent from "./components/TestComponent.vue";
+import NavBar from "./components/NavBar.vue";
+// import TestComponent from "./components/TestComponent.vue";
 // import SpeechToText from "./components/SpeechToText.vue";
 export default {
   components: {
     // MainPage,
-    TestComponent,
-    // SpeechToText,
+    // TestComponent,
+    NavBar,
   },
 };
 </script>

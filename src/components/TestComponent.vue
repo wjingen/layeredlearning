@@ -23,37 +23,60 @@
         </v-row>
       </div>
       <div class="search">
-        <v-card title="Search by Query" class="query-card">
+        <v-card class="query-card">
+          <h3>Search by Query</h3>
           <v-text-field
             v-model="userQuery"
             placeholder="Enter your topic"
-            style="width: 400px"
+            style="width: 400px; max-height: 100px"
             :append-icon="icon"
             @click:append="speechRecognition"
           ></v-text-field>
+          <v-btn @click="handleSubmit"> Submit </v-btn>
         </v-card>
         <v-card title="Search using File" class="query-card"
           ><v-file-input
             chips
             multiple
             label="File upload"
-            style="width: 500px"
+            style="width: 400px; max-height: 100px"
             v-model="uploadedFiles"
             :rules="rules"
             prepend-icon=""
             append-inner-icon="mdi-file"
             @change="handleFileUpload"
-          ></v-file-input
-        ></v-card>
+          ></v-file-input>
+          <v-btn @click="handleSubmit"> Submit </v-btn>
+        </v-card>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+// import ExplanationPage from "./ExplanationPage.vue";
 export default {
+  name: "MainPage",
+  components: {
+    // ExplanationPage,
+  },
   data() {
     return {
+      userQuery: "",
+      uploadedFiles: [],
+      difficultyButton: null,
+      recognition: null,
+      isRecognizingSpeech: false,
+      rules: [
+        (value) => {
+          return (
+            !value ||
+            !value.length ||
+            value[0].size < 2000000 ||
+            "Avatar size should be less than 2 MB!"
+          );
+        },
+      ],
       cards: [
         {
           id: 1,
@@ -77,6 +100,55 @@ export default {
         },
       ],
     };
+  },
+  mounted() {
+    this.initializeRecognition();
+  },
+  computed: {
+    icon() {
+      return this.isRecognizingSpeech
+        ? "mdi-loading mdi-spin"
+        : "mdi-microphone";
+    },
+  },
+  methods: {
+    handleFileUpload() {
+      console.log("Uploaded file:", this.uploadedFiles);
+    },
+    handleSubmit() {
+      alert(this.userQuery);
+      this.$router.push("/explanation");
+    },
+    initializeRecognition() {
+      // Create a new SpeechRecognition object
+      this.recognition = new (window.SpeechRecognition ||
+        window.webkitSpeechRecognition)();
+
+      // Set the language for speech recognition (optional)
+      this.recognition.lang = "en-US";
+
+      // Set the event listeners
+      this.recognition.onresult = (event) => {
+        const { transcript } = event.results[0][0];
+        this.userQuery = transcript;
+      };
+
+      this.recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+      };
+
+      this.recognition.onend = () => {
+        this.isRecognizingSpeech = false; // Toggle off the variable
+      };
+    },
+    speechRecognition() {
+      this.isRecognizingSpeech = !this.isRecognizingSpeech;
+      if (this.isRecognizingSpeech) {
+        this.recognition.start();
+      } else {
+        this.recognition.stop();
+      }
+    },
   },
 };
 </script>
@@ -131,6 +203,12 @@ h2 {
   width: 100%;
 }
 .search .query-card {
-  width: 600px;
+  width: 635px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 1px 4px 4px rgba(0, 0, 0, 0.2);
 }
 </style>
