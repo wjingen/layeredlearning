@@ -1,16 +1,19 @@
 <template>
   <div class="app">
-    <MainPage />
+    <!-- <MainPage /> -->
+    <TestComponent />
     <!-- <SpeechToText /> -->
   </div>
 </template>
 
 <script>
-import MainPage from "./components/MainPage.vue";
+// import MainPage from "./components/MainPage.vue";
+import TestComponent from "./components/TestComponent.vue";
 // import SpeechToText from "./components/SpeechToText.vue";
 export default {
   components: {
-    MainPage,
+    // MainPage,
+    TestComponent,
     // SpeechToText,
   },
 };

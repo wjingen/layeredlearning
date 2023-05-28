@@ -5,7 +5,7 @@
     <div class="input-container">
       <v-text-field
         v-model="userQuery"
-        placeholder="Enter your text"
+        placeholder="Enter your topic"
         style="width: 500px"
         :append-icon="icon"
         @click:append="speechRecognition"
@@ -41,8 +41,12 @@
 </template>
 
 <script>
+// import ExplanationPage from "./ExplanationPage.vue";
 export default {
   name: "MainPage",
+  components: {
+    // ExplanationPage,
+  },
   data() {
     return {
       userQuery: "",
