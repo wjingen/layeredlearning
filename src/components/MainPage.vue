@@ -5,8 +5,10 @@
     <div class="input-container">
       <v-text-field
         v-model="userQuery"
-        label="Enter your text"
+        placeholder="Enter your text"
         style="width: 500px"
+        :append-icon="icon"
+        @click:append="speechRecognition"
       ></v-text-field>
       <p>Otherwise, upload your documents in JPEG, ZIP or PDF:</p>
       <v-file-input
@@ -16,6 +18,8 @@
         style="width: 500px"
         v-model="uploadedFiles"
         :rules="rules"
+        prepend-icon=""
+        append-inner-icon="mdi-file"
         @change="handleFileUpload"
       ></v-file-input>
     </div>
@@ -44,6 +48,8 @@ export default {
       userQuery: "",
       uploadedFiles: [],
       difficultyButton: null,
+      recognition: null,
+      isRecognizingSpeech: false,
       rules: [
         (value) => {
           return (
@@ -56,12 +62,52 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.initializeRecognition();
+  },
+  computed: {
+    icon() {
+      return this.isRecognizingSpeech
+        ? "mdi-loading mdi-spin"
+        : "mdi-microphone";
+    },
+  },
   methods: {
     handleFileUpload() {
       console.log("Uploaded file:", this.uploadedFiles);
     },
     handleSubmit() {
       console.log(this.userQuery);
+    },
+    initializeRecognition() {
+      // Create a new SpeechRecognition object
+      this.recognition = new (window.SpeechRecognition ||
+        window.webkitSpeechRecognition)();
+
+      // Set the language for speech recognition (optional)
+      this.recognition.lang = "en-US";
+
+      // Set the event listeners
+      this.recognition.onresult = (event) => {
+        const { transcript } = event.results[0][0];
+        this.userQuery = transcript;
+      };
+
+      this.recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+      };
+
+      this.recognition.onend = () => {
+        this.isRecognizingSpeech = false; // Toggle off the variable
+      };
+    },
+    speechRecognition() {
+      this.isRecognizingSpeech = !this.isRecognizingSpeech;
+      if (this.isRecognizingSpeech) {
+        this.recognition.start();
+      } else {
+        this.recognition.stop();
+      }
     },
   },
 };
