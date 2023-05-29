@@ -1,6 +1,7 @@
 <template>
   <div class="main">
     <div class="left-sidebar">
+      {{ response }}
       <v-btn-toggle
         v-model="difficultyButton"
         mandatory
@@ -59,10 +60,12 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
       difficultyButton: null,
+      response: "",
       conversation: [
         {
           type: "bot",
@@ -93,6 +96,20 @@ export default {
         }, 1500);
       }
     },
+    async sendGetRequest() {
+      try {
+        const response = await axios.get(
+          "https://tensile-cable-388204.as.r.appspot.com/"
+        );
+        this.response = JSON.stringify(response.data, null, 2);
+        this.isLoading = false;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+  },
+  mounted() {
+    this.sendGetRequest();
   },
 };
 </script>
