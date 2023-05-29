@@ -22,24 +22,39 @@
           </v-col>
         </v-row>
       </div>
+      <h1>Input your Query.</h1>
+      <p>LayeredLearning takes in text, audio and files.</p>
       <div class="search">
-        <v-card class="query-card">
-          <h3>Search by Query</h3>
+        <v-card title="Query" class="query-card">
           <v-text-field
             v-model="userQuery"
             placeholder="Enter your topic"
-            style="width: 400px; max-height: 100px"
+            style="width: 80%; max-height: 80px"
             :append-icon="icon"
             @click:append="speechRecognition"
           ></v-text-field>
           <v-btn @click="handleSubmit"> Submit </v-btn>
         </v-card>
-        <v-card title="Search using File" class="query-card"
+        <v-card title="File" class="query-card"
           ><v-file-input
             chips
             multiple
             label="File upload"
-            style="width: 400px; max-height: 100px"
+            style="width: 80%; max-height: 80px"
+            v-model="uploadedFiles"
+            :rules="rules"
+            prepend-icon=""
+            append-inner-icon="mdi-file"
+            @change="handleFileUpload"
+          ></v-file-input>
+          <v-btn @click="handleSubmit"> Submit </v-btn>
+        </v-card>
+        <v-card title="Audio" class="query-card"
+          ><v-file-input
+            chips
+            multiple
+            label="File upload"
+            style="width: 80%; max-height: 80px"
             v-model="uploadedFiles"
             :rules="rules"
             prepend-icon=""
@@ -50,6 +65,7 @@
         </v-card>
       </div>
     </div>
+    {{ questions }}
   </div>
 </template>
 
@@ -201,10 +217,11 @@ h2 {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding-top: 20px;
 }
 .search .query-card {
-  width: 635px;
-  height: 300px;
+  width: 350px;
+  height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
