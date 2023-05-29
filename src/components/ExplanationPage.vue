@@ -76,34 +76,33 @@
       <h1>Quiz Yourself</h1>
       <!--  -->
       <!-- {{ this.quizData }} -->
-      <div v-for="(question, index) in quizData" :key="index">
-        <h3>{{ question.question }}</h3>
-        <div
-          v-for="(choice, choiceIndex) in question.choices"
-          :key="choiceIndex"
-        >
+      <div>
+        <h1>Quiz</h1>
+        <div v-for="(question, index) in quizData" :key="index">
+          <h3 style="text-align: left">{{ question.question }}</h3>
           <div
-            :class="{
-              option: true,
-              selected: selectedAnswers[index] === choice.option,
-              correct:
-                selectedAnswers[index] === choice.option &&
-                choice.option === question.answer,
-              incorrect:
-                selectedAnswers[index] === choice.option &&
-                choice.option !== question.answer,
-            }"
-            @click="selectAnswer(index, choice.option)"
+            v-for="(choice, choiceIndex) in question.choices"
+            :key="choiceIndex"
           >
-            {{ choice.option }}
+            <div
+              class="option"
+              :class="{
+                selected: selectedAnswers[index] === choice.option,
+                correct:
+                  selectedAnswers[index] === choice.option &&
+                  choice.option === question.answer,
+                incorrect:
+                  selectedAnswers[index] === choice.option &&
+                  choice.option !== question.answer,
+              }"
+              @click="selectAnswer(index, choice.option)"
+            >
+              {{ choice.option }}
+            </div>
           </div>
         </div>
       </div>
       <!--  -->
-      <div style="display: flex; justify-content: space-around">
-        <v-btn>Take Quiz</v-btn>
-        <v-btn>Back to Home</v-btn>
-      </div>
     </div>
   </div>
 </template>
@@ -306,7 +305,7 @@ export default {
   color: white;
   display: flex;
   flex-flow: row nowrap;
-  height: 1000px;
+  height: 100%;
 }
 .left-sidebar {
   min-width: 20%;
@@ -346,7 +345,7 @@ export default {
   cursor: pointer;
 }
 .summary {
-  background-color: red;
+  /* background-color: red; */
   height: 400px;
   width: 400px;
 }
@@ -365,10 +364,12 @@ export default {
 }
 
 /*  */
+
 .option {
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  text-align: left;
 }
 
 .option:hover {
