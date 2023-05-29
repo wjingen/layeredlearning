@@ -183,7 +183,7 @@ export default {
         {
           id: 4,
           iconHover: "mdi-account-group",
-          text: "Community Based",
+          text: "Progress Tracker",
         },
       ],
       faqList: [

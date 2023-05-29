@@ -8,23 +8,24 @@
         class="educationLevels"
       >
         <h1>Difficulty Level</h1>
-        <v-btn :color="difficultyButton === 0 ? 'blue' : ''">5-year-old</v-btn>
-        <v-btn :color="difficultyButton === 1 ? 'yellow' : ''"
-          >6th grader</v-btn
+        <v-btn :color="difficultyButton === 0 ? 'rgba(256, 256, 256, 0.9)' : ''"
+          >5 Year Old</v-btn
         >
-        <v-btn :color="difficultyButton === 2 ? 'orange' : ''"
-          >High school student</v-btn
+        <v-btn :color="difficultyButton === 1 ? 'rgba(256, 256, 256, 0.9)' : ''"
+          >6th Grader</v-btn
         >
-        <v-btn :color="difficultyButton === 3 ? 'red' : ''"
-          >Ph.D. candidate</v-btn
+        <v-btn :color="difficultyButton === 2 ? 'rgba(256, 256, 256, 0.9)' : ''"
+          >High School Student</v-btn
         >
-        <v-btn :color="difficultyButton === 4 ? 'black' : ''"
-          >University undergraduate</v-btn
+        <v-btn :color="difficultyButton === 3 ? 'rgba(256, 256, 256, 0.9)' : ''"
+          >University Undergraduate</v-btn
+        >
+        <v-btn :color="difficultyButton === 4 ? 'rgba(256, 256, 256, 0.9)' : ''"
+          >Ph.D. Candidate</v-btn
         >
       </v-btn-toggle>
     </div>
     <div class="explanation">
-      <h1>LayeredLearning Response</h1>
       <div class="conversation-container">
         <img
           src="../../static/logo.png"
@@ -38,21 +39,53 @@
         <!-- <text v-else style="display: inline">{{ this.response }}</text> -->
         <div v-else style="padding: 20px; padding-top: 40px">
           <h1>{{ this.mappingDifficulty[this.difficultyButton] }}</h1>
+          <!-- <div
+            v-for="(value, key) in this.response[
+              this.mappingDifficulty[this.difficultyButton]
+            ]"
+            :key="key"
+          >
+            <v-card
+              style="
+                background: #283d67;
+                padding: 50px;
+                border-color: #ffffff;
+                color: #ffffff;
+              "
+            >
+              <h3>{{ key }}</h3>
+              {{ value }}
+            </v-card>
+          </div> -->
           <div
             v-for="(value, key) in this.response[
               this.mappingDifficulty[this.difficultyButton]
             ]"
             :key="key"
           >
-            <h3>{{ key }}</h3>
-            {{ value }}
+            <v-card
+              style="
+                background: #283d67;
+                padding: 50px;
+                border-color: #ffffff;
+                color: #ffffff;
+              "
+            >
+              <h3>
+                {{ key }}
+              </h3>
+              <template v-if="key === 'Subtopics'">
+                <ul>
+                  <li v-for="(subtopic, index) in value" :key="index">
+                    {{ subtopic }}
+                  </li>
+                </ul>
+              </template>
+              <template v-else>
+                {{ value }}
+              </template>
+            </v-card>
           </div>
-          <!-- <div v-for="(value, key) in this.processedResponse" :key="key">
-            <p style="font-weight: bold">
-              {{ key }}
-            </p>
-            {{ value }}
-          </div> -->
         </div>
       </div>
     </div>
@@ -94,11 +127,11 @@ export default {
       isLoading: false,
       userInput: "",
       mappingDifficulty: [
-        "5-year-old",
-        "6th grader",
-        "High school student",
-        "University undergraduate",
-        "Ph.D. candidate",
+        "5 Year Old",
+        "6th Grader",
+        "High School Student",
+        "University Undergraduate",
+        "Ph.D. Candidate",
       ],
     };
   },
@@ -118,18 +151,48 @@ export default {
     async sendGetRequest() {
       try {
         this.isLoading = true;
-        const url =
-          "https://xuanming.pythonanywhere.com/explainer/" + this.userQuery;
-        const response = await axios.get(url);
-        this.response = response.data;
+        let data = JSON.stringify({
+          topic: "grey_hat_hacking",
+        });
+
+        // let config = {
+        //   method: "post",
+        //   maxBodyLength: Infinity,
+        //   url: "https://xuanming.pythonanywhere.com/explainer",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   data: data,
+        // };
+        // const response = await axios.get(url);
+        // this.response = response.data;
+        let config = {
+          method: "post",
+          maxBodyLength: Infinity,
+          url: "https://xuanming.pythonanywhere.com/explainer",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+        axios
+          .request(config)
+          .then((response) => {
+            // console.log(JSON.stringify(response.data));
+            this.response = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
         console.error("Error:", error);
       }
-      this.response = this.processResponse(this.response);
-      console.log(this.response);
-      console.log(this.response[this.mappingDifficulty[this.difficultyButton]]);
+      // this.response = this.processResponse(this.response);
+      // console.log(this.response);
+      // console.log(this.response[this.mappingDifficulty[this.difficultyButton]]);
     },
     processLevel(string) {
       const explanationRegex = "^(.*?)(?=Subtopics)";
@@ -186,7 +249,7 @@ export default {
 .educationLevels {
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-around;
+  justify-content: flex-start;
   height: 100%;
 }
 .educationLevels .v-btn {
