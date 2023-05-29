@@ -10,6 +10,9 @@
 
 <script>
 import pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "layered_learning/node_modules/pdfjs-dist/build/pdf.worker.js"; // Adjust the path accordingly
+import { getDocument } from "pdfjs-dist";
 
 export default {
   data() {
@@ -30,10 +33,13 @@ export default {
       }
     },
     extractTextFromPDF(typedArray) {
-      pdfjsLib.getDocument(typedArray).promise.then((pdf) => {
+      //   alert(typedArray);
+      //   console.log(getDocument);
+      //   console.log(pdfjsLib);
+      getDocument(typedArray).promise.then((pdf) => {
         const totalPages = pdf.numPages;
         let extractedText = "";
-
+        console.log("DEBUG");
         const getPageText = (pageNumber) => {
           return pdf.getPage(pageNumber).then((page) => {
             return page.getTextContent().then((content) => {

@@ -13,6 +13,8 @@ import TestComponentVue from './components/TestComponent.vue'
 import ExplanationPageVue from './components/ExplanationPage.vue'
 import FakeConversationVue from "./components/FakeConversation.vue"
 
+import pdfjs from "pdfjs-dist"
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -39,4 +41,5 @@ console.log(router)
 createApp(App)
 .use(vuetify)
 .use(router)
+.use(pdfjs)
 .mount('#app')
