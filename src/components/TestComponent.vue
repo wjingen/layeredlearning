@@ -22,8 +22,12 @@
           </v-col>
         </v-row>
       </div>
-      <h1>Input your Query.</h1>
-      <p>LayeredLearning takes in text, audio and files.</p>
+      <h1>
+        Unpack any <span class="color-effect">concept</span>, one layer at a
+        time.
+      </h1>
+      <p>LayeredLearning explains your queries at a level suitable for you.</p>
+      <p>Submit your query in text, PDF, or audio format.</p>
       <div class="search">
         <v-card title="Query" class="query-card">
           <v-text-field
@@ -218,6 +222,12 @@ h2 {
   justify-content: space-between;
   width: 100%;
   padding-top: 20px;
+}
+
+.color-effect {
+  background: linear-gradient(to right, #ff7f00, #4685ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .search .query-card {
   width: 350px;

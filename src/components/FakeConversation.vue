@@ -1,68 +1,66 @@
-<template>
+<!-- <template>
   <div>
     <input type="file" @change="handleFileChange" accept=".pdf" />
-    <div v-if="text">
+    <button @click="extractText" :disabled="!pdfLoaded">Extract Text</button>
+    <div v-if="textExtracted">
       <h2>Extracted Text:</h2>
-      <pre>{{ text }}</pre>
+      <pre>{{ extractedText }}</pre>
     </div>
   </div>
 </template>
 
 <script>
 import pdfjsLib from "pdfjs-dist";
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "layered_learning/node_modules/pdfjs-dist/build/pdf.worker.js"; // Adjust the path accordingly
-import { getDocument } from "pdfjs-dist";
+// import getDocument from "pdfjs-dist/webpack";
+
+import { load } from "mime";
 
 export default {
   data() {
     return {
-      text: null,
+      pdfFile: null,
+      pdfLoaded: false,
+      textExtracted: false,
+      extractedText: "",
     };
   },
   methods: {
     handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const typedArray = new Uint8Array(reader.result);
-          this.extractTextFromPDF(typedArray);
-        };
-        reader.readAsArrayBuffer(file);
-      }
+      this.pdfFile = event.target.files[0];
+      this.pdfLoaded = true;
     },
-    extractTextFromPDF(typedArray) {
-      //   alert(typedArray);
-      //   console.log(getDocument);
-      //   console.log(pdfjsLib);
-      getDocument(typedArray).promise.then((pdf) => {
-        const totalPages = pdf.numPages;
-        let extractedText = "";
-        console.log("DEBUG");
-        const getPageText = (pageNumber) => {
-          return pdf.getPage(pageNumber).then((page) => {
-            return page.getTextContent().then((content) => {
-              let pageText = "";
-              content.items.forEach((item) => {
-                pageText += item.str + " ";
-              });
-              return pageText.trim();
-            });
-          });
-        };
+    async extractText() {
+      try {
+        const pdfData = new Uint8Array(await this.pdfFile.arrayBuffer());
+        // const loadingTask = getDocument({ data: pdfData });
+        // const pdf = await loadingTask.promise;
+        // const numPages = pdf.numPages;
+        // let extractedText = "";
+        // console.log(numPages);
+        console.log(pdfData);
+        console.log(pdfjsLib.getDocument);
+        // for (let i = 1; i <= numPages; i++) {
+        //   const page = await pdf.getPage(i);
+        //   const textContent = await page.getTextContent();
+        //   const pageText = textContent.items.map((item) => item.str).join(" ");
+        //   extractedText += pageText + "\n";
+        // }
 
-        const promises = [];
-        for (let i = 1; i <= totalPages; i++) {
-          promises.push(getPageText(i));
-        }
-
-        Promise.all(promises).then((texts) => {
-          extractedText = texts.join("\n");
-          this.text = extractedText;
-        });
-      });
+        // this.extractedText = extractedText;
+        // this.textExtracted = true;
+      } catch (error) {
+        console.error("Error extracting text:", error);
+      }
     },
   },
 };
+</script> -->
+<template>
+  <div></div>
+</template>
+
+<script>
+export default {};
 </script>
+
+<style lang="scss" scoped></style>
