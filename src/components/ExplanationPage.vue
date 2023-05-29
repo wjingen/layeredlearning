@@ -1,7 +1,6 @@
 <template>
   <div class="main">
     <div class="left-sidebar">
-      {{ response }}
       <v-btn-toggle
         v-model="difficultyButton"
         mandatory
@@ -20,8 +19,6 @@
     </div>
     <div class="explanation">
       <h1>LayeredLearning Response</h1>
-      <v-icon v-if="this.isLoading">mdi-loading mdi-spin</v-icon>
-      <div v-else>{{ this.response }}</div>
       <div class="conversation-container">
         <div class="messages">
           <div
@@ -104,10 +101,10 @@ export default {
     async sendGetRequest() {
       try {
         this.isLoading = true;
-        const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+        // const proxyUrl = "https://cors-anywhere.herokuapp.com/";
         const url =
           "https://xuanming.pythonanywhere.com/explainer/" + this.userQuery;
-        const response = await axios.get(proxyUrl + url);
+        const response = await axios.get(url);
         this.response = response.data;
         this.isLoading = false;
       } catch (error) {
