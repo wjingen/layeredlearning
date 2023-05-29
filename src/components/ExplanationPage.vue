@@ -31,32 +31,17 @@
           src="../../static/logo.png"
           style="height: 100px; width: 100px; display: inline"
         />
-        <div v-if="isLoading">
+        <!-- {{ this.isLoading }} -->
+        <div v-if="this.isLoading">
           <v-icon style="padding-top: 50px; padding-left: 50px" size="x-large"
             >mdi-loading mdi-spin</v-icon
           >
         </div>
-        <!-- <text v-else style="display: inline">{{ this.response }}</text> -->
         <div v-else style="padding: 20px; padding-top: 40px">
-          <h1>{{ this.mappingDifficulty[this.difficultyButton] }}</h1>
-          <!-- <div
-            v-for="(value, key) in this.response[
-              this.mappingDifficulty[this.difficultyButton]
-            ]"
-            :key="key"
-          >
-            <v-card
-              style="
-                background: #283d67;
-                padding: 50px;
-                border-color: #ffffff;
-                color: #ffffff;
-              "
-            >
-              <h3>{{ key }}</h3>
-              {{ value }}
-            </v-card>
-          </div> -->
+          <h1>
+            Explanation Level:
+            {{ this.mappingDifficulty[this.difficultyButton] }}
+          </h1>
           <div
             v-for="(value, key) in this.response[
               this.mappingDifficulty[this.difficultyButton]
@@ -71,9 +56,7 @@
                 color: #ffffff;
               "
             >
-              <h3>
-                {{ key }}
-              </h3>
+              <h3>{{ key }}</h3>
               <template v-if="key === 'Subtopics'">
                 <ul>
                   <li v-for="(subtopic, index) in value" :key="index">
@@ -90,13 +73,33 @@
       </div>
     </div>
     <div class="right-side">
-      <h3>Summary</h3>
-      <v-card class="summary">hello there</v-card>
-      <p>
-        Still unsure of your understanding? Ask a follow-up question or take a
-        quiz to find out.
-      </p>
-      <v-card class="quiz">quiz section</v-card>
+      <h1>Quiz Yourself</h1>
+      <!--  -->
+      <!-- {{ this.quizData }} -->
+      <div v-for="(question, index) in quizData" :key="index">
+        <h3>{{ question.question }}</h3>
+        <div
+          v-for="(choice, choiceIndex) in question.choices"
+          :key="choiceIndex"
+        >
+          <div
+            :class="{
+              option: true,
+              selected: selectedAnswers[index] === choice.option,
+              correct:
+                selectedAnswers[index] === choice.option &&
+                choice.option === question.answer,
+              incorrect:
+                selectedAnswers[index] === choice.option &&
+                choice.option !== question.answer,
+            }"
+            @click="selectAnswer(index, choice.option)"
+          >
+            {{ choice.option }}
+          </div>
+        </div>
+      </div>
+      <!--  -->
       <div style="display: flex; justify-content: space-around">
         <v-btn>Take Quiz</v-btn>
         <v-btn>Back to Home</v-btn>
@@ -109,19 +112,12 @@
 import axios from "axios";
 export default {
   props: "userQuery",
-  // computed: {
-  //   processedResponse() {
-  //     console.log(this.difficultyButton);
-  //     console.log(this.response);
-  //     return this.processLevel(
-  //       this.response[this.mappingDifficulty[this.difficultyButton]]
-  //     );
-  //   },
-  // },
   data() {
     return {
       difficultyButton: 0,
       response: "",
+      // quizData: "",
+      selectedAnswers: [],
       // processedResponse: "",
       userQuery: "",
       isLoading: false,
@@ -133,6 +129,49 @@ export default {
         "University Undergraduate",
         "Ph.D. Candidate",
       ],
+      quizData: {
+        "What is an example of a black hat hacking technique?": {
+          choices: [
+            "Denial of Service attack",
+            "Disaster recovery plan",
+            "Social engineering",
+            "Data mining",
+          ],
+          answer: "Denial of Service attack",
+        },
+        "Which of the following language is not commonly used in black hat hacking?":
+          {
+            choices: ["JavaScript", "Python", "C++", "COBOL"],
+            answer: "COBOL",
+          },
+        "What is the purpose of a backdoor?": {
+          choices: [
+            "To provide an administrator with access to a system",
+            "To allow for data encryption",
+            "To send malicious requests to a website",
+            "To store sensitive documents",
+          ],
+          answer: "To provide an administrator with access to a system",
+        },
+        "Which of the following is an example of a malicious script?": {
+          choices: [
+            "Trojan Horse",
+            "Search engine optimization",
+            "DNS Poisoning",
+            "Ransomware",
+          ],
+          answer: "Ransomware",
+        },
+        "What is the primary purpose of malware?": {
+          choices: [
+            "To damage a target computer",
+            "To gain access to confidential data",
+            "To allow a user to bypass authentication",
+            "To gain access to critical infrastructure",
+          ],
+          answer: "To gain access to confidential data",
+        },
+      },
     };
   },
   methods: {
@@ -152,20 +191,8 @@ export default {
       try {
         this.isLoading = true;
         let data = JSON.stringify({
-          topic: "grey_hat_hacking",
+          topic: this.userQuery,
         });
-
-        // let config = {
-        //   method: "post",
-        //   maxBodyLength: Infinity,
-        //   url: "https://xuanming.pythonanywhere.com/explainer",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   data: data,
-        // };
-        // const response = await axios.get(url);
-        // this.response = response.data;
         let config = {
           method: "post",
           maxBodyLength: Infinity,
@@ -190,9 +217,51 @@ export default {
         this.isLoading = false;
         console.error("Error:", error);
       }
-      // this.response = this.processResponse(this.response);
-      // console.log(this.response);
-      // console.log(this.response[this.mappingDifficulty[this.difficultyButton]]);
+    },
+    async sendQuizRequest() {
+      const axios = require("axios");
+      let data = JSON.stringify({
+        topic: "black_hat_hacking",
+        role: "university_undergraduate",
+      });
+
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://xuanming.pythonanywhere.com/quiz",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          this.quizData = JSON.stringify(response.data);
+          console.log(this.quizData);
+          this.processQuizData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    processQuizData() {
+      const transformedData = Object.entries(this.quizData).map(
+        ([question, { choices, answer }]) => ({
+          question,
+          choices: choices.map((option) => ({ option })),
+          answer,
+        })
+      );
+
+      this.quizData = transformedData;
+      this.selectedAnswers = Array(transformedData.length).fill(null);
+      console.log(this.quizData);
+      console.log(this.selectedAnswers);
+    },
+    selectAnswer(index, answer) {
+      this.selectedAnswers.splice(index, 1, answer);
     },
     processLevel(string) {
       const explanationRegex = "^(.*?)(?=Subtopics)";
@@ -222,9 +291,11 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     this.userQuery = this.$route.query.userQuery;
     this.sendGetRequest();
+    this.processQuizData();
+    // this.sendQuizRequest();
   },
 };
 </script>
@@ -235,6 +306,7 @@ export default {
   color: white;
   display: flex;
   flex-flow: row nowrap;
+  height: 1000px;
 }
 .left-sidebar {
   min-width: 20%;
@@ -279,8 +351,41 @@ export default {
   width: 400px;
 }
 .quiz {
-  background-color: red;
+  /* background-color: red; */
   height: 400px;
   width: 400px;
+}
+
+.right-side {
+  /* background-color: green; */
+  width: 30%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+/*  */
+.option {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.option:hover {
+  background-color: lightgray;
+}
+
+.selected {
+  background-color: yellow;
+}
+
+.correct {
+  background-color: green;
+  color: white;
+}
+
+.incorrect {
+  background-color: red;
+  color: white;
 }
 </style>

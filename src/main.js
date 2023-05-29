@@ -37,8 +37,6 @@ const router = createRouter({
 		},
 	], history: createWebHistory(),
 })
-console.log(router)
-
 createApp(App)
 .use(vuetify)
 .use(router)

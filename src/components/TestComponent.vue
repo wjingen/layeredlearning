@@ -65,12 +65,10 @@
           Unpack any <span class="color-effect">concept</span>, one layer at a
           time.
         </h1>
-        <h3>
+        <text>
           LayeredLearning explains your queries at a level suitable for you.
-        </h3>
-        <text style="font-size: 1.2rem"
-          >Submit your query in text, PDF, or audio format.</text
-        >
+        </text>
+        <text style="font-size: 1.2rem">Ask anything below.</text>
       </div>
       <div class="search">
         <v-card title="Query" class="query-card">
@@ -83,7 +81,7 @@
           ></v-text-field>
           <v-btn @click="handleSubmit"> Submit </v-btn>
         </v-card>
-        <v-card title="File" class="query-card"
+        <!-- <v-card title="File" class="query-card"
           ><v-file-input
             chips
             multiple
@@ -110,7 +108,7 @@
             @change="handleFileUpload"
           ></v-file-input>
           <v-btn @click="handleSubmit"> Submit </v-btn>
-        </v-card>
+        </v-card> -->
       </div>
     </div>
     <div class="faq" ref="faq">
@@ -341,8 +339,8 @@ h2 {
 
 .search {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
   padding-top: 20px;
 }
 
@@ -352,7 +350,7 @@ h2 {
   -webkit-text-fill-color: transparent;
 }
 .search .query-card {
-  width: 350px;
+  width: 1300px;
   height: 500px;
   display: flex;
   flex-direction: column;

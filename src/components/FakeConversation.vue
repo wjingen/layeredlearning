@@ -1,24 +1,24 @@
 <template>
-  <div class="faq-dropdown">
-    <h2 class="faq-dropdown__title">Frequently Asked Questions</h2>
-    <ul class="faq-dropdown__list">
-      <li
-        v-for="(question, index) in faqList"
-        :key="index"
-        class="faq-dropdown__item"
-      >
-        <button @click="toggleAnswer(index)" class="faq-dropdown__question">
-          {{ question.title }}
-          <span
-            class="faq-dropdown__icon"
-            :class="{ 'faq-dropdown__icon--open': question.open }"
-          ></span>
-        </button>
-        <div v-if="question.open" class="faq-dropdown__answer">
-          {{ question.answer }}
+  <div>
+    <h1>Quiz</h1>
+    <div v-for="(question, index) in quizData" :key="index">
+      <h3>{{ question.question }}</h3>
+      <div v-for="(choice, choiceIndex) in question.choices" :key="choiceIndex">
+        <div
+          :class="{
+            option: true,
+            selected: selectedAnswers[index] === choice.option,
+            correct:
+              choice.isCorrect && selectedAnswers[index] === choice.option,
+            incorrect:
+              !choice.isCorrect && selectedAnswers[index] === choice.option,
+          }"
+          @click="selectAnswer(index, choice.option)"
+        >
+          {{ choice.option }}
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -26,109 +26,101 @@
 export default {
   data() {
     return {
-      faqList: [
-        {
-          title: "What is LayeredLearning?",
-          answer:
-            "LayeredLearning is an innovative online platform that offers a unique approach to learning by providing users with answers to their chosen topics at five different difficulty levels. It aims to cater to learners of all levels, from beginners to advanced.",
-          open: false,
-        },
-        {
-          title: "How does LayeredLearning work?",
-          answer:
-            "When you enter a topic into LayeredLearning, the platform generates five sets of answers, each designed to suit a specific difficulty level. The answers are presented in a layered format, with the easiest level displayed first and the most challenging level at the end. Users can explore the different levels of information based on their learning needs and preferences.",
-          open: false,
-        },
-        {
-          title: "What are the different difficulty levels available?",
-          answer:
-            "LayeredLearning provides five distinct difficulty levels to accommodate various learning abilities and preferences:\n\n- Level 1 (Easy): Beginner-friendly explanations and simple concepts.\n- Level 2 (Intermediate): Provides additional details and expands upon the basics.\n- Level 3 (Advanced): Offers more in-depth insights and complex ideas.\n- Level 4 (Expert): Presents comprehensive and detailed information for advanced learners.\n- Level 5 (Master): Provides the highest level of complexity and expertise on the chosen topic.",
-          open: false,
-        },
-        {
-          title: "How are the difficulty levels determined?",
-          answer:
-            "The difficulty levels in LayeredLearning are determined through a combination of algorithms and human input. The system analyzes the complexity and depth of information available on the chosen topic, categorizes it into appropriate levels, and fine-tunes it with the help of subject matter experts to ensure accuracy and relevance.",
-          open: false,
-        },
-        {
-          title: "Can I switch between difficulty levels?",
-          answer:
-            "Absolutely! LayeredLearning allows you to seamlessly switch between difficulty levels as per your preference. You can start with the easier levels and gradually progress to more challenging ones, or dive directly into a specific difficulty level based on your existing knowledge.",
-          open: false,
-        },
-        {
-          title: "Are the answers provided by LayeredLearning accurate?",
-          answer:
-            "LayeredLearning strives to provide accurate and reliable information. The content is curated and reviewed by a team of experts to ensure its quality. However, as with any online platform, it's always advisable to cross-reference information from multiple sources for a comprehensive understanding.",
-          open: false,
-        },
-      ],
+      quizData: [],
+      selectedAnswers: [],
     };
   },
   methods: {
-    toggleAnswer(index) {
-      this.faqList[index].open = !this.faqList[index].open;
+    processQuizData(data) {
+      console.log(data);
+      const transformedData = Object.entries(data).map(
+        ([question, choices]) => ({
+          question,
+          choices: choices[0].map((option, index) => ({
+            option,
+            isCorrect: index === choices[1].indexOf(option),
+          })),
+        })
+      );
+
+      this.quizData = transformedData;
+      this.selectedAnswers = Array(transformedData.length).fill(null);
+      console.log(this.quizData);
+      console.log(this.selectedAnswers);
     },
+    selectAnswer(index, answer) {
+      this.selectedAnswers.splice(index, 1, answer);
+    },
+  },
+  mounted() {
+    const quizData = {
+      "What is an example of a black hat hacking technique?": [
+        [
+          "Denial of Service attack",
+          "Disaster recovery plan",
+          "Social engineering",
+          "Data mining",
+        ],
+        "Denial of Service attack",
+      ],
+      "Which of the following language is not commonly used in black hat hacking?":
+        [["JavaScript", "Python", "C++", "COBOL"], "COBOL"],
+      "What is the purpose of a backdoor?": [
+        [
+          "To provide an administrator with access to a system",
+          "To allow for data encryption",
+          "To send malicious requests to a website",
+          "To store sensitive documents",
+        ],
+        "To provide an administrator with access to a system",
+      ],
+      "Which of the following is an example of a malicious script?": [
+        [
+          "Trojan Horse",
+          "Search engine optimization",
+          "DNS Poisoning",
+          "Ransomware",
+        ],
+        "Ransomware",
+      ],
+      "What is the primary purpose of malware?": [
+        [
+          "To damage a target computer",
+          "To gain access to confidential data",
+          "To allow a user to bypass authentication",
+          "To gain access to critical infrastructure",
+        ],
+        "To gain access to confidential data",
+      ],
+    };
+
+    this.processQuizData(quizData);
   },
 };
 </script>
 
 <style scoped>
-.faq-dropdown {
-  background-color: #27374d;
-  color: #ffffff;
-  padding: 20px;
-}
-
-.faq-dropdown__title {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.faq-dropdown__list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.faq-dropdown__item {
-  margin-bottom: 15px;
-}
-
-.faq-dropdown__question {
-  background-color: #27374d;
-  color: #ffffff;
-  border: none;
+.option {
+  padding: 10px;
   cursor: pointer;
-  padding: 10px;
-  font-size: 18px;
-  width: 100%;
-  text-align: left;
+  transition: background-color 0.3s ease;
 }
 
-.faq-dropdown__question:focus {
-  outline: none;
+.option:hover {
+  background-color: lightgray;
 }
 
-.faq-dropdown__icon {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-top: 2px solid #ffffff;
-  border-right: 2px solid #ffffff;
-  transform: rotate(45deg);
-  transition: transform 0.3s;
+.selected {
+  background-color: yellow;
 }
 
-.faq-dropdown__icon--open {
-  transform: rotate(135deg);
+.correct {
+  background-color: green;
+  color: white;
 }
 
-.faq-dropdown__answer {
-  background-color: #ffffff;
-  color: #27374d;
-  padding: 10px;
-  font-size: 16px;
-  display: flex;
+.incorrect {
+  background-color: red;
+  color: white;
 }
 </style>
