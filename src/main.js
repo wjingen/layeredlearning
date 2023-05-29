@@ -28,7 +28,8 @@ const router = createRouter({
 		},
 		{
 			path: '/explanation',
-			component: ExplanationPageVue
+			component: ExplanationPageVue,
+			props: true
 		},
 		{
 			path: '/fakeconvo',

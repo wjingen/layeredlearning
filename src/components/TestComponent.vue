@@ -243,9 +243,17 @@ export default {
     toggleAnswer(index) {
       this.faqList[index].open = !this.faqList[index].open;
     },
+    cleanUserQuery() {
+      this.userQuery = this.userQuery.replace(/\s+/g, "_").toLowerCase();
+    },
     handleSubmit() {
-      alert(this.userQuery);
-      this.$router.push("/explanation");
+      this.cleanUserQuery();
+      this.$router.push({
+        path: "/explanation",
+        query: {
+          userQuery: this.userQuery,
+        },
+      });
     },
     initializeRecognition() {
       // Create a new SpeechRecognition object
