@@ -15,11 +15,11 @@ from langchain.memory import ConversationBufferMemory
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase = firebase_admin.initialize_app(cred, options = {
-    "databaseURL": 'https://layeredlearnings-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    "databaseURL": 'databaseURL'
 })  
 bucket = storage.bucket('default')
 
-OPENAI_API_KEY="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"
+OPENAI_API_KEY="OPENAI_API_KEY"
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 app = Flask(__name__)
 CORS(app)
