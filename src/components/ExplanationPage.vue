@@ -8,38 +8,51 @@
         class="educationLevels"
       >
         <h1>Difficulty Level</h1>
-        <v-btn :color="difficultyButton === 0 ? 'blue' : ''">Easy</v-btn>
+        <v-btn :color="difficultyButton === 0 ? 'blue' : ''">5-year-old</v-btn>
         <v-btn :color="difficultyButton === 1 ? 'yellow' : ''"
-          >Intermediate</v-btn
+          >6th grader</v-btn
         >
-        <v-btn :color="difficultyButton === 2 ? 'orange' : ''">Advanced</v-btn>
-        <v-btn :color="difficultyButton === 3 ? 'red' : ''">Expert</v-btn>
-        <v-btn :color="difficultyButton === 4 ? 'black' : ''">Master</v-btn>
+        <v-btn :color="difficultyButton === 2 ? 'orange' : ''"
+          >High school student</v-btn
+        >
+        <v-btn :color="difficultyButton === 3 ? 'red' : ''"
+          >Ph.D. candidate</v-btn
+        >
+        <v-btn :color="difficultyButton === 4 ? 'black' : ''"
+          >University undergraduate</v-btn
+        >
       </v-btn-toggle>
     </div>
     <div class="explanation">
       <h1>LayeredLearning Response</h1>
       <div class="conversation-container">
-        <div class="messages">
-          <div
-            v-for="(message, index) in conversation"
-            :key="index"
-            :class="['message', message.type]"
+        <img
+          src="../../static/logo.png"
+          style="height: 100px; width: 100px; display: inline"
+        />
+        <div v-if="isLoading">
+          <v-icon style="padding-top: 50px; padding-left: 50px" size="x-large"
+            >mdi-loading mdi-spin</v-icon
           >
-            <v-icon style="padding: 30px">mdi-account</v-icon>
-            <div class="message-content">
-              <span>{{ message.text }}</span>
-            </div>
-          </div>
         </div>
-        <div class="input-container">
-          <input
-            v-model="userInput"
-            @keydown.enter="sendMessage"
-            type="text"
-            placeholder="Type your message..."
-          />
-          <button @click="sendMessage">Send</button>
+        <!-- <text v-else style="display: inline">{{ this.response }}</text> -->
+        <div v-else style="padding: 20px; padding-top: 40px">
+          <h1>{{ this.mappingDifficulty[this.difficultyButton] }}</h1>
+          <div
+            v-for="(value, key) in this.response[
+              this.mappingDifficulty[this.difficultyButton]
+            ]"
+            :key="key"
+          >
+            <h3>{{ key }}</h3>
+            {{ value }}
+          </div>
+          <!-- <div v-for="(value, key) in this.processedResponse" :key="key">
+            <p style="font-weight: bold">
+              {{ key }}
+            </p>
+            {{ value }}
+          </div> -->
         </div>
       </div>
     </div>
@@ -63,45 +76,48 @@
 import axios from "axios";
 export default {
   props: "userQuery",
+  // computed: {
+  //   processedResponse() {
+  //     console.log(this.difficultyButton);
+  //     console.log(this.response);
+  //     return this.processLevel(
+  //       this.response[this.mappingDifficulty[this.difficultyButton]]
+  //     );
+  //   },
+  // },
   data() {
     return {
-      difficultyButton: null,
+      difficultyButton: 0,
       response: "",
+      // processedResponse: "",
       userQuery: "",
       isLoading: false,
-      conversation: [
-        {
-          type: "bot",
-          text: "REST (Representational State Transfer) API (Application Programming \
-      Interface) is an architectural style and set of guidelines used for \
-      designing and interacting with web services. It provides a standardized \
-      way for systems to communicate over the internet. REST APIs are widely \
-      used in modern web development to enable communication between client \
-      applications, such as web browsers or mobile apps, and server-side s\
-      applications.",
-        },
-      ],
       userInput: "",
+      mappingDifficulty: [
+        "5-year-old",
+        "6th grader",
+        "High school student",
+        "University undergraduate",
+        "Ph.D. candidate",
+      ],
     };
   },
   methods: {
-    sendMessage() {
-      if (this.userInput.trim() !== "") {
-        this.conversation.push({ type: "user", text: this.userInput });
-        this.userInput = "";
+    processResponse(response) {
+      const regexPattern = /([^\n:]+):\s*([^]+?)(?=\n\n|\n$|$)/g;
+      const parsedResponse = {};
 
-        setTimeout(() => {
-          this.conversation.push({
-            type: "bot",
-            text: "I am just a demo chatbot. I cannot provide real responses.",
-          });
-        }, 1500);
+      let match;
+      while ((match = regexPattern.exec(response))) {
+        const [, level, response] = match;
+        parsedResponse[level.trim()] = this.processLevel(response);
       }
+      return parsedResponse;
+      // You can store the parsedResponse in a data property or use it as needed
     },
     async sendGetRequest() {
       try {
         this.isLoading = true;
-        // const proxyUrl = "https://cors-anywhere.herokuapp.com/";
         const url =
           "https://xuanming.pythonanywhere.com/explainer/" + this.userQuery;
         const response = await axios.get(url);
@@ -111,9 +127,38 @@ export default {
         this.isLoading = false;
         console.error("Error:", error);
       }
+      this.response = this.processResponse(this.response);
       console.log(this.response);
+      console.log(this.response[this.mappingDifficulty[this.difficultyButton]]);
+    },
+    processLevel(string) {
+      const explanationRegex = "^(.*?)(?=Subtopics)";
+      const subtopicsRegex = "Subtopics:([^\\.]+)";
+      const relatedMaterialsRegex = "Additional materials:([^\\.]+)";
+
+      const explanationMatch = string.match(new RegExp(explanationRegex));
+      const subtopicsMatch = string.match(new RegExp(subtopicsRegex));
+      const relatedMaterialsMatch = string.match(
+        new RegExp(relatedMaterialsRegex)
+      );
+
+      const explanation = explanationMatch ? explanationMatch[1].trim() : "";
+      const subtopics = subtopicsMatch ? subtopicsMatch[1].trim() : "";
+      const relatedMaterials = relatedMaterialsMatch
+        ? relatedMaterialsMatch[1].trim()
+        : "";
+
+      const response = {
+        Explanation: explanation,
+        "Related Materials": relatedMaterials,
+        Subtopics: subtopics,
+      };
+      // console.log(response);
+
+      return response;
     },
   },
+
   mounted() {
     this.userQuery = this.$route.query.userQuery;
     this.sendGetRequest();
@@ -153,53 +198,7 @@ export default {
 .conversation-container {
   width: 1000px;
   height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.messages {
-  padding: 10px;
-  max-height: 800px;
-  overflow-y: scroll;
-}
-
-.message {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.bot {
-  flex-direction: row;
-  justify-content: flex-start;
-}
-
-.user {
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-}
-
-.message-content {
-  padding: 6px 12px;
-  background-color: black;
-  border-radius: 4px;
-}
-
-.input-container {
-  display: flex;
-  align-items: center;
-  /* padding: 10px; */
-  background-color: #f5f5f5;
-}
-
-input[type="text"] {
-  flex-grow: 1;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
 }
 
 .conversation-container button {
