@@ -42,44 +42,46 @@
             Explanation Level:
             {{ this.mappingDifficulty[this.difficultyButton] }}
           </h1>
+          {{ this.mappingDifficulty[this.difficultyButton] }}
+          {{ this.response["5 Year Old"] }}
+          {{ typeof this.response }}
           <div
             v-for="(value, key) in this.response[
               this.mappingDifficulty[this.difficultyButton]
             ]"
             :key="key"
           >
-            <v-card
+            <!-- <v-card
               style="
                 background: #283d67;
                 padding: 50px;
                 border-color: #ffffff;
                 color: #ffffff;
               "
-            >
-              <h3>{{ key }}</h3>
-              <template v-if="key === 'Subtopics'">
-                <ul>
-                  <li v-for="(subtopic, index) in value" :key="index">
-                    {{ subtopic }}
-                  </li>
-                </ul>
-              </template>
-              <template v-else>
-                {{ value }}
-              </template>
-            </v-card>
+            > -->
+            <h3>{{ key }}</h3>
+            <template v-if="key === 'Subtopics'">
+              <ul>
+                <li v-for="(subtopic, index) in value" :key="index">
+                  {{ subtopic }}
+                </li>
+              </ul>
+            </template>
+            <template v-else>
+              {{ value }}
+            </template>
+            <!-- </v-card> -->
           </div>
         </div>
       </div>
     </div>
     <div class="right-side">
-      <h1>Quiz Yourself</h1>
-      <!--  -->
-      <!-- {{ this.quizData }} -->
       <div>
         <h1>Quiz</h1>
         <div v-for="(question, index) in quizData" :key="index">
-          <h3 style="text-align: left">{{ question.question }}</h3>
+          <p style="text-align: left; text-decoration: underline">
+            {{ index + 1 }}. {{ question.question }}
+          </p>
           <div
             v-for="(choice, choiceIndex) in question.choices"
             :key="choiceIndex"
@@ -187,34 +189,28 @@ export default {
       // You can store the parsedResponse in a data property or use it as needed
     },
     async sendGetRequest() {
-      try {
-        this.isLoading = true;
-        let data = JSON.stringify({
-          topic: this.userQuery,
-        });
-        let config = {
-          method: "post",
-          maxBodyLength: Infinity,
-          url: "https://xuanming.pythonanywhere.com/explainer",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: data,
-        };
-        axios
-          .request(config)
-          .then((response) => {
-            // console.log(JSON.stringify(response.data));
-            this.response = response.data;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+      // const axios = require("axios");
+      let data = JSON.stringify({
+        topic: "soap_api",
+      });
 
-        this.isLoading = false;
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://xuanming.pythonanywhere.com/explainer",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      try {
+        const response = await axios.request(config);
+        this.response = JSON.stringify(response.data);
+        // console.log(typeof this.response);
+        // console.log(this.response);
+        console.log(this.response["5 Year Old"]);
       } catch (error) {
-        this.isLoading = false;
-        console.error("Error:", error);
+        console.log(error);
       }
     },
     async sendQuizRequest() {
@@ -361,6 +357,7 @@ export default {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  padding: 40px;
 }
 
 /*  */

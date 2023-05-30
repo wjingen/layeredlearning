@@ -8,28 +8,37 @@
           justify-content: space-around;
           height: 500px;
           width: 400px;
+          box-shadow: 1px 4px 4px rgba(0, 0, 0, 0.2);
         "
       >
         <h1>LayeredLearning: The 21st Century Learning Tool</h1>
-        <p>We break down any concept into difficulty levels.</p>
-        <div>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
-          >
-            <v-btn
-              style="height: 40px; text-align: center"
-              @click="scrollToNextPage"
-              >Get Started</v-btn
+        <p>We break down any concept for your understanding.</p>
+        <div class="search">
+          <div class="query-card">
+            <v-text-field
+              v-model="userQuery"
+              placeholder="Enter your topic"
+              style="width: 80%; max-height: 80px"
+              :append-icon="icon"
+              @click:append="speechRecognition"
+            ></v-text-field>
+            <div
+              style="width: 100%; display: flex; justify-content: space-around"
             >
-            <v-btn style="height: 40px; text-align: center" @click="scrollToFaq"
-              >How it Works</v-btn
-            >
+              <v-btn
+                style="height: 40px; text-align: center"
+                @click="handleSubmit"
+                >Submit</v-btn
+              >
+              <v-btn
+                style="height: 40px; text-align: center"
+                @click="scrollToFaq"
+                >How it Works</v-btn
+              >
+            </div>
           </div>
         </div>
+        <div></div>
       </div>
       <div><img src="../../static/logo.png" /></div>
     </div>
@@ -69,46 +78,6 @@
           LayeredLearning explains your queries at a level suitable for you.
         </text>
         <text style="font-size: 1.2rem">Ask anything below.</text>
-      </div>
-      <div class="search">
-        <v-card title="Query" class="query-card">
-          <v-text-field
-            v-model="userQuery"
-            placeholder="Enter your topic"
-            style="width: 80%; max-height: 80px"
-            :append-icon="icon"
-            @click:append="speechRecognition"
-          ></v-text-field>
-          <v-btn @click="handleSubmit"> Submit </v-btn>
-        </v-card>
-        <!-- <v-card title="File" class="query-card"
-          ><v-file-input
-            chips
-            multiple
-            label="File upload"
-            style="width: 80%; max-height: 80px"
-            v-model="uploadedFiles"
-            :rules="rules"
-            prepend-icon=""
-            append-inner-icon="mdi-file"
-            @change="handleFileUpload"
-          ></v-file-input>
-          <v-btn @click="handleSubmit"> Submit </v-btn>
-        </v-card>
-        <v-card title="Audio" class="query-card"
-          ><v-file-input
-            chips
-            multiple
-            label="File upload"
-            style="width: 80%; max-height: 80px"
-            v-model="uploadedFiles"
-            :rules="rules"
-            prepend-icon=""
-            append-inner-icon="mdi-file"
-            @change="handleFileUpload"
-          ></v-file-input>
-          <v-btn @click="handleSubmit"> Submit </v-btn>
-        </v-card> -->
       </div>
     </div>
     <div class="faq" ref="faq">
@@ -287,7 +256,11 @@ export default {
       this.$refs.bottom.scrollIntoView({ behavior: "smooth", block: "start" });
     },
     scrollToFaq() {
-      this.$refs.faq.scrollIntoView({ behavior: "smooth", block: "start" });
+      this.$refs.faq.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        alignToTop: true,
+      });
     },
   },
 };
@@ -350,13 +323,12 @@ h2 {
   -webkit-text-fill-color: transparent;
 }
 .search .query-card {
-  width: 1300px;
-  height: 500px;
+  width: 100%;
+  height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  box-shadow: 1px 4px 4px rgba(0, 0, 0, 0.2);
 }
 .faq {
   display: flex;
