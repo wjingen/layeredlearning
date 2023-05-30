@@ -16,14 +16,20 @@ def generate_results(topic):
             Write an explanation of {topic} suitable for five different education levels: a 5-year-old, a 6th grader, a high school student, a university undergraduate, and a Ph.D. candidate.
 
             Constraints:
+            No commas.
             The explanation for each target group must not exceed 100 words in length.
             The explanation should be similar to the content in a summary page of a report.
             Each explanation should be accompanied with up to 5 related subtopics of the explanation for each level that would deepen the understanding of Convolutional Neural Networks. For example, if the topic is about linear algebra, it should contain info about diagonalization, eigenvalues etc.
-            Note that each level should be provided with its unique list of additional learning materials to cater to its specific needs.
+            Note that each level should be provided with its unique list of subtopics to cater to its specific needs.
 
             Resources:
             1. Long term memory management.
             2. GPT-3.5 powered agents for delegation of simple tasks.
+
+            Output:
+            The explanations in JSON key value format. 
+            The key is the target group and the value is the explanation.
+            E.g. "5 Year Old": "Explanation": explanation, "subtopics": ["subtopic1", "subtopic2"], "6th Grader": "Explanation": explanation, "subtopics": ["subtopic1", "subtopic2"], "High School Student": "Explanation": explanation, "subtopics": ["subtopic1", "subtopic2"], "University Undergraduate": "Explanation": explanation, "subtopics": ["subtopic1", "subtopic2"], "Ph.D. Candidate": "Explanation": explanation, "subtopics": ["subtopic1", "subtopic2"]
         """
     )
     chain = LLMChain(llm=llm, prompt=prompt)
@@ -55,6 +61,13 @@ def generate_qna(topic, role):
             Resources:
             1. Long term memory management.
             2. GPT-3.5 powered agents for delegation of simple tasks.
+
+            Output:
+            A 5 question MCQ quiz in JSON format. Return only the JSON object and nothing else
+            Example:
+            question: "What is the capital of France?",
+            answers: ["Paris", "London", "New York", "Tokyo"],
+            correct_answer: "Paris"
         """
     )
     chain = LLMChain(llm=llm, prompt=prompt)
@@ -64,42 +77,3 @@ def generate_qna(topic, role):
     })
     # Notify the reader that the data was successfully loaded.
     return result
-
-def validate_email_format(email):
-    pattern = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-    return re.match(pattern, email) is not None
-
-def validate_password_strength(password):
-    # Min and max length constraints
-    min_length = 8
-    max_length = 128
-    if len(password) < min_length or len(password) > max_length:
-        return False
-
-    # At least one upper case letter check
-    if not re.search(r'[A-Z]', password):
-        return False
-
-    # At least one lower case letter check
-    if not re.search(r'[a-z]', password):
-        return False
-
-    # At least one digit check  
-    if not re.search(r'\d', password):
-        return False
-
-    # At least one special character check
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return False
-
-    # No repetitive or sequential characters check
-    if re.search(r'(.)\1+', password) or '1234' in password or 'abcd' in password:
-        return False
-
-    # No common passwords check
-    common_passwords = ["password", "12345678", "qwerty", "admin"]
-    if password in common_passwords:
-        return False
-
-    # If the password passed all the checks, return True
-    return True
